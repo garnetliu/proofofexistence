@@ -1,6 +1,7 @@
 import binascii
 import io
 import json
+import urllib
 import logging
 
 try:
@@ -8,7 +9,8 @@ try:
 except ImportError:
     from urllib.request import urlopen, HTTPError
 
-from google.appengine.api import urlfetch
+# from google.appengine.api import urlfetch
+import urlfetch
 
 from ..tx import TxOut
 

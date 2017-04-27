@@ -39,6 +39,12 @@ BASE58_LOOKUP = dict((c, i) for i, c in enumerate(BASE58_ALPHABET))
 
 class EncodingError(Exception): pass
 
+def btc2satoshi(btc):
+    return int(btc * 100000000)
+
+def satoshi2btc(satoshi):
+    return satoshi * 0.00000001
+
 def ripemd160(data):
     return hashlib.new("ripemd160", data)
 

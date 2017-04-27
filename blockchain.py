@@ -44,14 +44,14 @@ def construct_data_tx(data, _from, _to):
     data_bin = tools.compile(data_text)
     new_txs_out = [TxOut(0, data_bin)]
 
-    # script_text = "OP_DUP OP_HASH160 %s OP_EQUALVERIFY OP_CHECKSIG" %(b2h(bitcoin_address_to_hash160_sec(_to)))
-    # script_bin = tools.compile(script_text)
-    # if max_coin_value >= TX_FEES:
-    #     coin_value = max_coin_value-TX_FEES
-    # else:
-    #     coin_value = max_coin_value - MIN_FEE
-    # new_txs_out.append(TxOut(coin_value, script_bin))
-    # print "sending %d satoshis to %s" %((coin_value), _to)
+    script_text = "OP_DUP OP_HASH160 %s OP_EQUALVERIFY OP_CHECKSIG" %(b2h(bitcoin_address_to_hash160_sec(_to)))
+    script_bin = tools.compile(script_text)
+    if max_coin_value >= TX_FEES:
+        coin_value = max_coin_value-TX_FEES
+    else:
+        coin_value = max_coin_value - MIN_FEE
+    new_txs_out.append(TxOut(coin_value, script_bin))
+    print "sending %d satoshis to %s" %((coin_value), _to)
 
     version = 1
     lock_time = 0
@@ -72,9 +72,10 @@ def pushtxn(raw_tx):
     data = urllib.urlencode(dict(tx=raw_tx)).encode("utf8")
     response = urlfetch.post(PUSH_URL_1, data=data)
     if response.status_code == 200:
-        j = json.loads(response.content)
-        txid = j.get('txid')
-        return txid, raw_tx
+        # j = json.loads(response.content)
+        # txid = j.get('txid')
+        # return txid, raw_tx
+        return response.content
     else:
         msg = 'Error accessing API:' + str(response.status) + " " + str(response.content)
         # logging.error(msg)
@@ -94,6 +95,6 @@ def publish_data(data):
         return (None, unsigned_tx)
     signed_tx = unsigned_tx.sign(SecretExponentSolver([secret_exponent]))
     raw_tx = tx2hex(signed_tx)
-    txid, message = pushtxn(raw_tx)
-    return txid, message, raw_tx
+    content = pushtxn(raw_tx)
+    return content, raw_tx
 
